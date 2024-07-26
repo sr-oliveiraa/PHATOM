@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel de Consultores</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Painel de Consultores</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Data</th>
+                <th>Quantidade</th>
+                <th>Prioridade/Quantidade</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for consultor in consultores %}
+                <tr class="{{ 'prioridade' if consultor.prioridade == 'Prioridade' else 'quantidade' }}">
+                    <td>{{ consultor.nome }}</td>
+                    <td>{{ consultor.data }}</td>
+                    <td>{{ consultor.quantidade }}</td>
+                    <td>{{ consultor.prioridade }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

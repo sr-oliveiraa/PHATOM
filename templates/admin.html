@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Admin Panel</h1>
+    <form method="POST">
+        <input type="text" name="nome" placeholder="Nome do Consultor" required>
+        <input type="text" name="data" placeholder="Data (DD/MM/AAAA)" required>
+        <input type="number" name="quantidade" placeholder="Quantidade" required>
+        <select name="prioridade" required>
+            <option value="Prioridade">Prioridade</option>
+            <option value="Quantidade">Quantidade</option>
+        </select>
+        <button type="submit">Adicionar Consultor</button>
+    </form>
+    <h2>Consultores</h2>
+    <ul>
+        {% for consultor in consultores %}
+            <li>{{ consultor.nome }} - {{ consultor.data }} - {{ consultor.quantidade }} - {{ consultor.prioridade }}
+                <a href="{{ url_for('delete', id=consultor.id) }}">Remover</a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
