@@ -9,6 +9,7 @@
     <h1>Admin Panel</h1>
     <form method="POST">
         <input type="text" name="nome" placeholder="Nome do Consultor" required>
+        <input type="text" name="cidade" placeholder="Cidade" required>
         <input type="text" name="data" placeholder="Data (DD/MM/AAAA)" required>
         <input type="number" name="quantidade" placeholder="Quantidade" required>
         <select name="prioridade" required>
@@ -20,7 +21,7 @@
     <h2>Consultores</h2>
     <ul>
         {% for consultor in consultores %}
-            <li>{{ consultor.nome }} - {{ consultor.data }} - {{ consultor.quantidade }} - {{ consultor.prioridade }}
+            <li>{{ consultor.nome }} - {{ consultor.cidade }} - {{ consultor.data }} - {{ consultor.quantidade }} - {{ consultor.prioridade }}
                 <a href="{{ url_for('delete', id=consultor.id) }}">Remover</a>
             </li>
         {% endfor %}

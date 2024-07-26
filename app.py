@@ -11,6 +11,7 @@ db = SQLAlchemy(app)
 class Consultor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
+    cidade = db.Column(db.String(100), nullable=False)
     data = db.Column(db.String(100), nullable=False)
     quantidade = db.Column(db.Integer, nullable=False)
     prioridade = db.Column(db.String(10), nullable=False)
@@ -24,10 +25,11 @@ def painel():
 def admin():
     if request.method == 'POST':
         nome = request.form['nome']
+        cidade = request.form['cidade']
         data = request.form['data']
         quantidade = request.form['quantidade']
         prioridade = request.form['prioridade']
-        novo_consultor = Consultor(nome=nome, data=data, quantidade=quantidade, prioridade=prioridade)
+        novo_consultor = Consultor(nome=nome, cidade=cidade, data=data, quantidade=quantidade, prioridade=prioridade)
         db.session.add(novo_consultor)
         db.session.commit()
         return redirect(url_for('admin'))

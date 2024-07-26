@@ -11,6 +11,7 @@
         <thead>
             <tr>
                 <th>Nome</th>
+                <th>Cidade</th>
                 <th>Data</th>
                 <th>Quantidade</th>
                 <th>Prioridade/Quantidade</th>
@@ -20,6 +21,7 @@
             {% for consultor in consultores %}
                 <tr class="{{ 'prioridade' if consultor.prioridade == 'Prioridade' else 'quantidade' }}">
                     <td>{{ consultor.nome }}</td>
+                    <td>{{ consultor.cidade }}</td>
                     <td>{{ consultor.data }}</td>
                     <td>{{ consultor.quantidade }}</td>
                     <td>{{ consultor.prioridade }}</td>
